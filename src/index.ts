@@ -11,10 +11,10 @@ const prisma = new PrismaClient();
 const initServer = async () => {
   const schema = await buildSchema({
     resolvers,
-    validate: false,
+    validate: false
   });
 
-  const server = new ApolloServer({ schema, context: () => ({ prisma }) });
+  const server = new ApolloServer({ schema, context: () => ({ prisma }), introspection: true, persistedQueries: false });
 
   server.listen({ port: 3000 }).then(r => {
     console.log(`Server ready at ${r.url}`);
