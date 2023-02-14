@@ -4,9 +4,7 @@ name: efrei_projet_db_prod
 
 services:
   back:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
+    image: docker.nexus.jiveoff.fr/jiveoff/efrei-projet-db-back:stable
     tty: true
     ports:
       - "3000:3000"
