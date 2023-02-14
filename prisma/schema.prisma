@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typegraphql {
+  provider = "typegraphql-prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// @@TypeGraphQL.type(name: "Acheteur")
+model ACHETEUR {
+  nom      String   @db.VarChar(50)
+  prenom   String   @db.VarChar(50)
+  ignored  String   @db.VarChar(50) @map("_ignored") @default("ignored")
+  PERSONNE PERSONNE @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Restrict, map: "ACHETEUR_ibfk_1")
+  VISITE   VISITE[]
+
+  @@id([nom, prenom])
+}
+
+/// @@TypeGraphQL.type(name: "Adresse")
+model ADRESSE {
+  num_voie String     @db.VarChar(50)
+  nom_voie String     @db.VarChar(50)
+  ville    String     @db.VarChar(50)
+  GARAGE   GARAGE[]
+  LOGEMENT LOGEMENT[]
+  PERSONNE PERSONNE[]
+
+  @@id([num_voie, nom_voie, ville])
+}
+
+/// @@TypeGraphQL.type(name: "Garage")
+model GARAGE {
+  id          Int       @id
+  num_voie    String    @db.VarChar(50)
+  nom_voie    String    @db.VarChar(50)
+  ville       String    @db.VarChar(50)
+  id_logement Int?
+  ADRESSE     ADRESSE   @relation(fields: [num_voie, nom_voie, ville], references: [num_voie, nom_voie, ville], onUpdate: Restrict, map: "GARAGE_ibfk_1")
+  LOGEMENT    LOGEMENT? @relation(fields: [id_logement], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "GARAGE_ibfk_2")
+
+  @@index([id_logement], map: "id_logement")
+  @@index([num_voie, nom_voie, ville], map: "num_voie")
+}
+
+/// @@TypeGraphQL.type(name: "Logement")
+model LOGEMENT {
+  id                Int           @id @default(autoincrement())
+  type              String        @db.VarChar(50)
+  nb_pieces         Int
+  surface_habitable Int
+  etat              String        @db.VarChar(50)
+  objectif_gestion  String        @db.VarChar(50)
+  prix              Float         @db.Float
+  date_dispo        DateTime      @db.Date
+  num_voie          String        @db.VarChar(50)
+  nom_voie          String        @db.VarChar(50)
+  ville             String        @db.VarChar(50)
+  nom               String        @db.VarChar(50)
+  prenom            String        @db.VarChar(50)
+  GARAGE            GARAGE[]
+  ADRESSE           ADRESSE       @relation(fields: [num_voie, nom_voie, ville], references: [num_voie, nom_voie, ville], onUpdate: Restrict, map: "LOGEMENT_ibfk_1")
+  PROPRIETAIRE      PROPRIETAIRE  @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Restrict, map: "LOGEMENT_ibfk_2")
+  TRANSACTION       TRANSACTION[]
+  VISITE            VISITE[]
+
+  @@index([nom, prenom], map: "nom")
+  @@index([num_voie, nom_voie, ville], map: "num_voie")
+}
+
+/// @@TypeGraphQL.type(name: "Personne")
+model PERSONNE {
+  nom          String        @db.VarChar(50)
+  prenom       String        @db.VarChar(50)
+  num_voie     String        @db.VarChar(50)
+  nom_voie     String        @db.VarChar(50)
+  ville        String        @db.VarChar(50)
+  ACHETEUR     ACHETEUR?
+  ADRESSE      ADRESSE       @relation(fields: [num_voie, nom_voie, ville], references: [num_voie, nom_voie, ville], onUpdate: Restrict, map: "PERSONNE_ibfk_1")
+  PROPRIETAIRE PROPRIETAIRE?
+  TRANSACTION  TRANSACTION[]
+
+  @@id([nom, prenom])
+  @@index([num_voie, nom_voie, ville], map: "num_voie")
+}
+
+/// @@TypeGraphQL.type(name: "Proprietaire")
+model PROPRIETAIRE {
+  nom      String     @db.VarChar(50)
+  prenom   String     @db.VarChar(50)
+  ignored  String   @db.VarChar(50) @map("_ignored") @default("ignored")
+  LOGEMENT LOGEMENT[]
+  PERSONNE PERSONNE   @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Restrict, map: "PROPRIETAIRE_ibfk_1")
+
+  @@id([nom, prenom])
+}
+
+/// @@TypeGraphQL.type(name: "Transaction")
+model TRANSACTION {
+  id       Int
+  nom      String   @db.VarChar(50)
+  prenom   String   @db.VarChar(50)
+  ignored  String   @db.VarChar(50) @map("_ignored") @default("ignored")
+  LOGEMENT LOGEMENT @relation(fields: [id], references: [id], onUpdate: Restrict, map: "TRANSACTION_ibfk_1")
+  PERSONNE PERSONNE @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Restrict, map: "TRANSACTION_ibfk_2")
+
+  @@id([id, nom, prenom])
+  @@index([nom, prenom], map: "nom")
+}
+
+/// @@TypeGraphQL.type(name: "Visite")
+model VISITE {
+  id          Int
+  nom         String   @db.VarChar(50)
+  prenom      String   @db.VarChar(50)
+  visite_date DateTime @db.DateTime(0)
+  LOGEMENT    LOGEMENT @relation(fields: [id], references: [id], onUpdate: Restrict, map: "VISITE_ibfk_1")
+  ACHETEUR    ACHETEUR @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Restrict, map: "VISITE_ibfk_2")
+
+  @@id([id, nom, prenom])
+  @@index([nom, prenom], map: "nom")
+}
