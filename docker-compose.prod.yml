@@ -6,5 +6,8 @@ services:
   back:
     image: docker.nexus.jiveoff.fr/jiveoff/efrei-projet-db-back:master
     tty: true
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      NODE_ENV: ${NODE_ENV}
     ports:
-      - "3000:3000"
+      - "3006:3000"
