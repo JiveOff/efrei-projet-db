@@ -41,6 +41,7 @@ model GARAGE {
   nom_voie    String    @db.VarChar(50)
   ville       String    @db.VarChar(50)
   id_logement Int?
+  ignored     String   @db.VarChar(50) @map("_ignored") @default("ignored")
   ADRESSE     ADRESSE   @relation(fields: [num_voie, nom_voie, ville], references: [num_voie, nom_voie, ville], onUpdate: Restrict, map: "GARAGE_ibfk_1")
   LOGEMENT    LOGEMENT? @relation(fields: [id_logement], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "GARAGE_ibfk_2")
 
