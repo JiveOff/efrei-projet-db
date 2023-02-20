@@ -16,7 +16,7 @@ model ACHETEUR {
   nom      String   @db.VarChar(50)
   prenom   String   @db.VarChar(50)
   ignored  String   @db.VarChar(50) @map("_ignored") @default("ignored")
-  PERSONNE PERSONNE @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Restrict, map: "ACHETEUR_ibfk_1")
+  PERSONNE PERSONNE @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Cascade, map: "ACHETEUR_ibfk_1")
   VISITE   VISITE[]
 
   @@id([nom, prenom])
@@ -42,8 +42,8 @@ model GARAGE {
   ville       String    @db.VarChar(50)
   id_logement Int?
   ignored     String   @db.VarChar(50) @map("_ignored") @default("ignored")
-  ADRESSE     ADRESSE   @relation(fields: [num_voie, nom_voie, ville], references: [num_voie, nom_voie, ville], onUpdate: Restrict, map: "GARAGE_ibfk_1")
-  LOGEMENT    LOGEMENT? @relation(fields: [id_logement], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "GARAGE_ibfk_2")
+  ADRESSE     ADRESSE   @relation(fields: [num_voie, nom_voie, ville], references: [num_voie, nom_voie, ville], onUpdate: Cascade, map: "GARAGE_ibfk_1")
+  LOGEMENT    LOGEMENT? @relation(fields: [id_logement], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "GARAGE_ibfk_2")
 
   @@index([id_logement], map: "id_logement")
   @@index([num_voie, nom_voie, ville], map: "num_voie")
@@ -65,8 +65,8 @@ model LOGEMENT {
   nom               String        @db.VarChar(50)
   prenom            String        @db.VarChar(50)
   GARAGE            GARAGE[]
-  ADRESSE           ADRESSE       @relation(fields: [num_voie, nom_voie, ville], references: [num_voie, nom_voie, ville], onUpdate: Restrict, map: "LOGEMENT_ibfk_1")
-  PROPRIETAIRE      PROPRIETAIRE  @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Restrict, map: "LOGEMENT_ibfk_2")
+  ADRESSE           ADRESSE       @relation(fields: [num_voie, nom_voie, ville], references: [num_voie, nom_voie, ville], onUpdate: Cascade, map: "LOGEMENT_ibfk_1")
+  PROPRIETAIRE      PROPRIETAIRE  @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Cascade, map: "LOGEMENT_ibfk_2")
   TRANSACTION       TRANSACTION[]
   VISITE            VISITE[]
 
@@ -82,7 +82,7 @@ model PERSONNE {
   nom_voie     String        @db.VarChar(50)
   ville        String        @db.VarChar(50)
   ACHETEUR     ACHETEUR?
-  ADRESSE      ADRESSE       @relation(fields: [num_voie, nom_voie, ville], references: [num_voie, nom_voie, ville], onUpdate: Restrict, map: "PERSONNE_ibfk_1")
+  ADRESSE      ADRESSE       @relation(fields: [num_voie, nom_voie, ville], references: [num_voie, nom_voie, ville], onUpdate: Cascade, map: "PERSONNE_ibfk_1")
   PROPRIETAIRE PROPRIETAIRE?
   TRANSACTION  TRANSACTION[]
 
@@ -96,7 +96,7 @@ model PROPRIETAIRE {
   prenom   String     @db.VarChar(50)
   ignored  String   @db.VarChar(50) @map("_ignored") @default("ignored")
   LOGEMENT LOGEMENT[]
-  PERSONNE PERSONNE   @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Restrict, map: "PROPRIETAIRE_ibfk_1")
+  PERSONNE PERSONNE   @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Cascade, map: "PROPRIETAIRE_ibfk_1")
 
   @@id([nom, prenom])
 }
@@ -107,8 +107,8 @@ model TRANSACTION {
   nom      String   @db.VarChar(50)
   prenom   String   @db.VarChar(50)
   ignored  String   @db.VarChar(50) @map("_ignored") @default("ignored")
-  LOGEMENT LOGEMENT @relation(fields: [id], references: [id], onUpdate: Restrict, map: "TRANSACTION_ibfk_1")
-  PERSONNE PERSONNE @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Restrict, map: "TRANSACTION_ibfk_2")
+  LOGEMENT LOGEMENT @relation(fields: [id], references: [id], onUpdate: Cascade, map: "TRANSACTION_ibfk_1")
+  PERSONNE PERSONNE @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Cascade, map: "TRANSACTION_ibfk_2")
 
   @@id([id, nom, prenom])
   @@index([nom, prenom], map: "nom")
@@ -120,8 +120,8 @@ model VISITE {
   nom         String   @db.VarChar(50)
   prenom      String   @db.VarChar(50)
   visite_date DateTime @db.DateTime(0)
-  LOGEMENT    LOGEMENT @relation(fields: [id], references: [id], onUpdate: Restrict, map: "VISITE_ibfk_1")
-  ACHETEUR    ACHETEUR @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Restrict, map: "VISITE_ibfk_2")
+  LOGEMENT    LOGEMENT @relation(fields: [id], references: [id], onUpdate: Cascade, map: "VISITE_ibfk_1")
+  ACHETEUR    ACHETEUR @relation(fields: [nom, prenom], references: [nom, prenom], onUpdate: Cascade, map: "VISITE_ibfk_2")
 
   @@id([id, nom, prenom])
   @@index([nom, prenom], map: "nom")
