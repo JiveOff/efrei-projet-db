@@ -36,7 +36,7 @@ model ADRESSE {
 
 /// @@TypeGraphQL.type(name: "Garage")
 model GARAGE {
-  id          Int       @id
+  id          Int       @id @default(autoincrement())
   num_voie    String    @db.VarChar(50)
   nom_voie    String    @db.VarChar(50)
   ville       String    @db.VarChar(50)
